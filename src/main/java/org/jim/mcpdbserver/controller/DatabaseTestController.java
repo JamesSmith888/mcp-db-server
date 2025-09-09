@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -152,45 +151,6 @@ public class DatabaseTestController {
         } catch (Exception e) {
             log.error("Error testing executeGroovyScript: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    /**
-     * 综合测试 - 获取系统状态
-     * GET /api/test/database/status
-     */
-    @GetMapping("/status")
-    public ResponseEntity<Map<String, Object>> getSystemStatus() {
-        log.info("Getting system status");
-        Map<String, Object> status = new HashMap<>();
-
-        try {
-            // 获取数据源信息
-            Map<String, Object> datasources = databaseOperationService.getDataSourcesInfo();
-            status.put("datasources", datasources);
-
-            // 获取扩展信息
-            List<Extension> extensions = databaseOperationService.getAllExtensions();
-            status.put("extensions_count", extensions.size());
-            status.put("extensions", extensions);
-
-            // 测试默认数据源连接
-            try {
-                JsonNode testResult = databaseOperationService.executeSqlOnDefault("SELECT 1 as test_connection");
-                status.put("default_datasource_test", "SUCCESS");
-                status.put("test_result", testResult);
-            } catch (Exception e) {
-                status.put("default_datasource_test", "FAILED");
-                status.put("test_error", e.getMessage());
-            }
-
-            status.put("status", "OK");
-            return ResponseEntity.ok(status);
-        } catch (Exception e) {
-            log.error("Error getting system status: {}", e.getMessage(), e);
-            status.put("status", "ERROR");
-            status.put("error", e.getMessage());
-            return ResponseEntity.internalServerError().body(status);
         }
     }
 

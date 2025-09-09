@@ -5,6 +5,7 @@ import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jim.mcpdbserver.config.MethodToolCallbackProviderCustom;
 import org.jim.mcpdbserver.config.extension.GroovyService;
 import org.jim.mcpdbserver.mcp.DatabaseOperationService;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -33,7 +34,7 @@ public class McpDbServerApplication {
 
     @Bean
     public ToolCallbackProvider mysqlToolCallbackProvider(DatabaseOperationService optionService) {
-        return MethodToolCallbackProvider.builder()
+        return MethodToolCallbackProviderCustom.builder()
                 .toolObjects(optionService)
                 .build();
     }

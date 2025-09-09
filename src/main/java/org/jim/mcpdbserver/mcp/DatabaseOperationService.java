@@ -60,7 +60,6 @@ public class DatabaseOperationService {
         log.info("DatabaseOperationService initialized with DataSourceService, SqlSecurityValidator and JdbcExecutor");
     }
 
-
     /**
      * 执行任意SQL语句，不做限制，直接透传数据库服务器的返回值。该工具会查询所有可用的数据源，并执行相同的SQL查询。如果考虑性能，更建议使用executeSqlWithDataSource
      * 在所有可用的数据源上执行相同的SQL查询
@@ -185,6 +184,9 @@ public class DatabaseOperationService {
             
             Prerequisites:
             - NONE - does not require getDataSourcesInfo()
+            
+            Database Dialect:
+            - %s（Must match the SQL dialect of the default datasource）
             
             Returns:
             - Format: JsonNode containing query results from default datasource
