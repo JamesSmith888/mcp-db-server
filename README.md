@@ -1,7 +1,7 @@
 # MCP DB Server
 
 一个基于 Spring AI 的MCP，可执行任意 SQL，支持多种数据库。
-> **STDIO模式:** 如果您更喜欢使用STDIO模式，请查看 [mcp-mysql-server](https://github.com/JamesSmith888/mcp-mysql-server) 
+> 如果您更喜欢使用STDIO模式，请查看 [mcp-mysql-server](https://github.com/JamesSmith888/mcp-mysql-server) 
 
 [中文文档](README.md) | [English Documentation](README_EN.md)
 
