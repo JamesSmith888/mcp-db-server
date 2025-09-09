@@ -8,11 +8,15 @@ Summary
 - Purpose: Expose an MCP (Model Context Protocol) HTTP server that can execute SQL against one or more JDBC data sources, with optional Groovy-powered data processing extensions and SQL safety controls.
 - Tech stack: Java 21, Spring Boot 3.5.x, Spring JDBC, spring-ai-starter-mcp-server-webmvc, Groovy. Packaged/build with Maven.
 - Service port: 6789 (see src/main/resources/application.yml)
+- Protocol: SSE mode (single server, multiple clients), replaces stdio mode for better resource management
 
 Important notes from README
 - JDK 21+ and Maven 3.6+ are required.
-- Datasource config lives in src/main/resources/datasource.yml by default and can be overridden via --datasource.config=...</n- Groovy extensions are defined in src/main/resources/extension.yml; optional external scripts/dep jars can be loaded by setting -Dloader.path to src/main/resources/groovy when running.
-- The README currently references mcp-mysql-server in examples; use mcp-db-server paths and artifact names in this repository.
+- Datasource config lives in src/main/resources/datasource.yml by default and can be overridden via --datasource.config=...
+- Groovy extensions are defined in src/main/resources/extension.yml; optional external scripts/dep jars can be loaded by setting -Dloader.path to src/main/resources/groovy when running.
+- Supports multiple databases: MySQL, PostgreSQL, Oracle, SQL Server, H2, SQLite, MariaDB, ClickHouse, etc.
+- Recommended startup: cd to project root and run ./mvnw spring-boot:run
+- Client configuration (SSE mode): {"mcp-db-server": {"url": "http://localhost:6789/sse"}}
 
 Build, run, test
 - Build (fast, no tests)
@@ -54,7 +58,8 @@ Lint/format
 Runtime behavior and configuration (big picture)
 - MCP server
   - spring-ai-starter-mcp-server-webmvc provides the MCP HTTP server scaffolding. The server name/version is set in application.yml under spring.ai.mcp.server.
-  - The service listens on port 6789 (server.port).
+  - The service listens on port 6789 (server.port) and exposes SSE endpoint at /sse.
+  - SSE mode allows single server instance to serve multiple AI clients simultaneously, improving resource efficiency.
 
 - SQL execution and data sources
   - Spring JDBC is used to interact with databases. Multiple JDBC data sources can be defined under datasource.datasources in datasource.yml. One can be flagged default: true; otherwise, the first is treated as default.

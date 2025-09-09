@@ -1,6 +1,8 @@
 # Extensions Documentation
 
-MCP MySQL Server supports extending its functionality through Groovy scripts. These extensions can be executed at runtime via specific tool calls.
+MCP DB Server supports extending its functionality through Groovy scripts. These extensions can be executed at runtime via specific tool calls.
+
+> **Note for STDIO Mode Users:** If you prefer using STDIO mode, please check out [mcp-mysql-server](https://github.com/JamesSmith888/mcp-mysql-server) which supports the traditional STDIO protocol.
 
 ## Configuration File
 
@@ -123,21 +125,33 @@ Both startup methods now support extension functionality:
 JAR package startup command when using extension features:
 
 ```bash
-java -Dloader.path=/path/to/your/project/src/main/resources/groovy -jar target/mcp-mysql-server-0.0.1-SNAPSHOT.jar
+java -Dloader.path=/path/to/your/project/src/main/resources/groovy -jar target/mcp-db-server-0.0.1-SNAPSHOT.jar
 ```
 
-Corresponding MCP JSON configuration:
+Traditional STDIO mode MCP JSON configuration:
 
 ```json
 {
   "mcpServers": {
-    "mcp-mysql-server": {
+    "mcp-db-server": {
       "command": "java",
       "args": [
         "-Dloader.path=/your-path/src/main/resources/groovy",
         "-jar",
-        "/your-path/mcp-mysql-server-0.0.1-SNAPSHOT.jar"
+        "/your-path/mcp-db-server-0.0.1-SNAPSHOT.jar"
       ]
+    }
+  }
+}
+```
+
+**Recommended: Use SSE Mode** - Run `./mvnw spring-boot:run` in project root, then configure:
+
+```json
+{
+  "mcpServers": {
+    "mcp-db-server": {
+      "url": "http://localhost:6789/sse"
     }
   }
 }

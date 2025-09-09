@@ -45,6 +45,9 @@ public class DatabaseOperationService {
     private final JdbcExecutor jdbcExecutor;
     private final DatabaseAdapterService databaseAdapterService;
 
+    // 创建固定大小的线程池，最多5个线程同时执行
+    ExecutorService executor = Executors.newFixedThreadPool(8);
+
     @Resource
     private GroovyService groovyService;
 
@@ -112,10 +115,6 @@ public class DatabaseOperationService {
 
         // 存储每个数据源的查询结果，使用线程安全的ConcurrentHashMap
         Map<String, Object> successResults = new ConcurrentHashMap<>();
-
-        // 创建固定大小的线程池，最多5个线程同时执行
-        ExecutorService executor = Executors.newFixedThreadPool(Math.min(5, dataSourceNames.size()));
-        log.info("Created thread pool with {} threads", Math.min(5, dataSourceNames.size()));
 
         try {
             // 等待所有任务完成

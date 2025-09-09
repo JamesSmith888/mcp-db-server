@@ -1,6 +1,6 @@
 # 扩展功能详细文档
 
-MCP MySQL Server 支持通过 Groovy 脚本来扩展其功能。这些扩展可以在运行时通过特定的工具调用来执行。
+MCP DB Server 支持通过 Groovy 脚本来扩展其功能。这些扩展可以在运行时通过特定的工具调用来执行。
 
 ## 配置文件
 
@@ -123,21 +123,33 @@ processData(input)
 使用扩展功能时的 JAR 包启动命令：
 
 ```bash
-java -Dloader.path=/path/to/your/project/src/main/resources/groovy -jar target/mcp-mysql-server-0.0.1-SNAPSHOT.jar
+java -Dloader.path=/path/to/your/project/src/main/resources/groovy -jar target/mcp-db-server-0.0.1-SNAPSHOT.jar
 ```
 
-对应的 MCP JSON 配置：
+传统 stdio 模式的 MCP JSON 配置：
 
 ```json
 {
   "mcpServers": {
-    "mcp-mysql-server": {
+    "mcp-db-server": {
       "command": "java",
       "args": [
         "-Dloader.path=/your-path/src/main/resources/groovy",
         "-jar",
-        "/your-path/mcp-mysql-server-0.0.1-SNAPSHOT.jar"
+        "/your-path/mcp-db-server-0.0.1-SNAPSHOT.jar"
       ]
+    }
+  }
+}
+```
+
+**推荐使用 SSE 模式**：在项目根目录执行 `./mvnw spring-boot:run` 启动服务，然后配置：
+
+```json
+{
+  "mcpServers": {
+    "mcp-db-server": {
+      "url": "http://localhost:6789/sse"
     }
   }
 }

@@ -1,61 +1,37 @@
-# MCP MySQL Server
+# MCP DB Server
 
-一个基于 Spring AI 的MCP，可执行任意 SQL。
+一个基于 Spring AI 的MCP，可执行任意 SQL，支持多种数据库。
+> **STDIO模式:** 如果您更喜欢使用STDIO模式，请查看 [mcp-mysql-server](https://github.com/JamesSmith888/mcp-mysql-server) 
 
 [中文文档](README.md) | [English Documentation](README_EN.md)
 
-## 快速上手
+## 快速上手（SSE模式）
 
-### 1. MCP JSON 配置
+### 1. 启动服务
 
-#### 方式一：Maven Wrapper 启动
-
-```json
-{
-  "mcpServers": {
-    "mcp-mysql-server": {
-      "command": "/Users/xin.y/IdeaProjects/mcp-mysql-server/mvnw",
-      "args": [
-        "-q",
-        "-f",
-        "/Users/xin.y/IdeaProjects/mcp-mysql-server/pom.xml",
-        "spring-boot:run"
-      ]
-    }
-  }
-}
-```
-
-#### 方式二：JAR 包启动
-
-构建jar
+在项目根目录下执行：
 
 ```bash
-./mvnw clean package
+./mvnw spring-boot:run
 ```
 
-配置MCP服务器
+### 2. MCP 客户端配置
+
+在AI客户端配置文件中添加（部分客户端需要手动选择SSE传输类型）：
 
 ```json
 {
   "mcpServers": {
-    "mcp-mysql-server": {
-      "command": "java",
-      "args": [
-        "-Dloader.path=/Users/xin.y/IdeaProjects/mcp-mysql-server/src/main/resources/groovy",
-        "-jar",
-        "/Users/xin.y/IdeaProjects/mcp-mysql-server/target/mcp-mysql-server-0.0.1-SNAPSHOT.jar"
-      ]
+    "mcp-db-server": {
+      "url": "http://localhost:6789/sse"
     }
   }
 }
 ```
 
-**注意：** `-Dloader.path` 参数为可选，仅在需要运行扩展功能时才需要指定。
+### 3. 数据源配置
 
-### 2. 数据源配置
-
-修改 `mcp-mysql-server/src/main/resources/datasource.yml` 文件：
+修改 `src/main/resources/datasource.yml` 文件：
 
 ```yaml
 datasource:
@@ -71,8 +47,9 @@ datasource:
 
 ## 功能特点
 
+- **多数据库支持** - 支持 MySQL、PostgreSQL、Oracle、SQL Server、H2、SQLite、MariaDB、ClickHouse 等
 - **多数据源支持** - 配置和管理多个数据库数据源
-- **动态数据源切换** - 运行时动态切换不同的数据源
+- **SSE传输模式** - 支持多客户端连接。更适用团队开发场景
 - **扩展功能** - 通过 Groovy 脚本扩展功能
 - **SQL 安全控制** - 防止 AI 模型执行危险 SQL 操作
 

@@ -1,61 +1,38 @@
-# MCP MySQL Server
+# MCP DB Server
 
-A Spring AI-based MCP capable of executing any SQL query.
+A Spring AI-based MCP capable of executing SQL operations on multiple databases.
+
+> **Note for STDIO Mode Users:** If you prefer using STDIO mode, please check out [mcp-mysql-server](https://github.com/JamesSmith888/mcp-mysql-server) which supports the traditional STDIO protocol.
 
 [中文文档](README.md) | [English Documentation](README_EN.md)
 
-## Quick Start
+## Quick Start (SSE Mode)
 
-### 1. MCP JSON Configuration
+### 1. Start the Service
 
-#### Method 1: Maven Wrapper Startup
-
-```json
-{
-  "mcpServers": {
-    "mcp-mysql-server": {
-      "command": "/Users/xin.y/IdeaProjects/mcp-mysql-server/mvnw",
-      "args": [
-        "-q",
-        "-f",
-        "/Users/xin.y/IdeaProjects/mcp-mysql-server/pom.xml",
-        "spring-boot:run"
-      ]
-    }
-  }
-}
-```
-
-#### Method 2: JAR Package Startup
-
-Build the JAR package
+Run in the project root directory:
 
 ```bash
-./mvnw clean package
+./mvnw spring-boot:run
 ```
 
-Configure the MCP server
+### 2. MCP Client Configuration
+
+Add to your AI client configuration file (some clients require manually selecting SSE transport type):
 
 ```json
 {
   "mcpServers": {
-    "mcp-mysql-server": {
-      "command": "java",
-      "args": [
-        "-Dloader.path=/Users/xin.y/IdeaProjects/mcp-mysql-server/src/main/resources/groovy",
-        "-jar",
-        "/Users/xin.y/IdeaProjects/mcp-mysql-server/target/mcp-mysql-server-0.0.1-SNAPSHOT.jar"
-      ]
+    "mcp-db-server": {
+      "url": "http://localhost:6789/sse"
     }
   }
 }
 ```
 
-**Note:** The `-Dloader.path` parameter is optional and only needed when running extensions.
+### 3. Data Source Configuration
 
-### 2. Data Source Configuration (Minimal Configuration)
-
-Modify the `mcp-mysql-server/src/main/resources/datasource.yml` file:
+Modify the `src/main/resources/datasource.yml` file:
 
 ```yaml
 datasource:
@@ -71,8 +48,9 @@ datasource:
 
 ## Features
 
+- **Multiple Database Support** - Supports MySQL, PostgreSQL, Oracle, SQL Server, H2, SQLite, MariaDB, ClickHouse, etc.
 - **Multiple Data Source Support** - Configure and manage multiple database data sources
-- **Dynamic Data Source Switching** - Switch between different data sources at runtime
+- **SSE Transport Mode** - Supports multi-client connections. More suitable for team development scenarios
 - **Extension Features** - Extend functionality through Groovy scripts
 - **SQL Security Control** - Prevent AI models from executing dangerous SQL operations
 
