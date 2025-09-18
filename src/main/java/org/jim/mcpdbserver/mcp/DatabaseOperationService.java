@@ -45,8 +45,8 @@ public class DatabaseOperationService {
     private final JdbcExecutor jdbcExecutor;
     private final DatabaseAdapterService databaseAdapterService;
 
-    // 创建固定大小的线程池，最多5个线程同时执行
-    ExecutorService executor = Executors.newFixedThreadPool(8);
+    // 非CPU密集型任务，尝试使用虚拟线程
+    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     @Resource
     private GroovyService groovyService;
