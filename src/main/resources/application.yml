@@ -6,6 +6,10 @@ spring:
       server:
         name: mcp-db-server
         version: 1.0.0
+        streamable-http:
+          keep-alive-interval: 30s
+          mcp-endpoint: /mcp
+        protocol: streamable
   application:
     name: mcp-db-server
 server:
