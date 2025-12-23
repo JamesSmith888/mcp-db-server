@@ -137,6 +137,10 @@ public class DatabaseOperationService {
                             return;
                         }
 
+                        // 将错误信息放入结果中
+                        Map<String, String> errorInfo = new HashMap<>();
+                        errorInfo.put("error", result.errorMessage());
+                        successResults.put(dsName, errorInfo);
                         log.error("SQL execution error on datasource [{}]: {}", dsName, result.errorMessage());
                     }, executor)).toArray(CompletableFuture[]::new)
             );
@@ -189,8 +193,9 @@ public class DatabaseOperationService {
             
             Returns:
             - Format: JsonNode containing query results from default datasource
-            - Empty result: Returns message "No data returned from SQL query"
-            - Error: Returns error details
+            - Success: Returns query results (array of objects or update count)
+            - Error: Returns {"error": "detailed error message"} with the actual database error
+            - Empty result: Returns message only when query succeeds but returns no rows
             
             Data Processing:
             - If results contain encrypted/encoded data (Base64, hex, encrypted fields):
@@ -230,9 +235,27 @@ public class DatabaseOperationService {
             return objectMapper.valueToTree(emptyResult);
         }
 
+        Object resultData = stringObjectMap.get(defaultDataSourceName);
+        
+        // 检查是否为错误信息（可能是String类型的错误消息，或者是包含error字段的Map）
+        if (resultData instanceof String && ((String) resultData).startsWith("Datasource")) {
+            // 数据源不存在的错误
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("error", resultData);
+            return objectMapper.valueToTree(errorResult);
+        }
+        
+        if (resultData instanceof Map) {
+            Map<?, ?> resultMap = (Map<?, ?>) resultData;
+            if (resultMap.containsKey("error")) {
+                // 包含错误信息，直接返回
+                return objectMapper.valueToTree(resultData);
+            }
+        }
+
         // to JsonNode
         try {
-            String o = objectMapper.writeValueAsString(stringObjectMap.get(defaultDataSourceName));
+            String o = objectMapper.writeValueAsString(resultData);
             return objectMapper.readTree(o);
         } catch (Exception e) {
             log.error("Failed to parse SQL result as JSON: {}", e.getMessage(), e);
@@ -329,6 +352,10 @@ public class DatabaseOperationService {
             return result;
         }
 
+        // 将错误信息放入结果中，让AI能够看到具体的错误原因
+        Map<String, String> errorInfo = new HashMap<>();
+        errorInfo.put("error", sqlResult.errorMessage());
+        result.put(dataSourceName, errorInfo);
         log.error("executeSqlWithDataSource SQL execution error on datasource [{}]: {}", dataSourceName, sqlResult.errorMessage());
 
         return result;
